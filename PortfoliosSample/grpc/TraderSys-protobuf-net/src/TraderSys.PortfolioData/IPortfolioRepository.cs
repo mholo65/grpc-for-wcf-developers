@@ -1,7 +1,7 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using TraderSys.PortfolioData.Models;
+using TraderSys.Portfolios.Models;
 
 namespace TraderSys.PortfolioData
 {

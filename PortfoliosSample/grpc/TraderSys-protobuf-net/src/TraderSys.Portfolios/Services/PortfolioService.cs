@@ -1,14 +1,12 @@
 using System;
-using System.Linq;
 using System.Threading.Tasks;
-using Grpc.Core;
 using Microsoft.AspNetCore.Authorization;
 using TraderSys.PortfolioData;
-using TraderSys.Portfolios.Protos;
+using TraderSys.Portfolios.Models;
 
 namespace TraderSys.Portfolios.Services
 {
-    public class PortfolioService : Protos.Portfolios.PortfoliosBase
+    public class PortfolioService : IPortfolioService
     {
         private readonly IPortfolioRepository _repository;
 
@@ -17,33 +15,21 @@ namespace TraderSys.Portfolios.Services
             _repository = repository;
         }
 
-        [Authorize]
-        public override async Task<GetResponse> Get(GetRequest request, ServerCallContext context)
+        public async Task<Portfolio> Get(GetPortfolioRequest request)
         {
-            if (!Guid.TryParse(request.TraderId, out var traderId))
-            {
-                throw new RpcException(new Status(StatusCode.InvalidArgument, "traderId must be a UUID"));
-            }
+            var portfolio = await _repository.GetAsync(request.TraderId, request.PortfolioId);
 
-            var portfolio = await _repository.GetAsync(traderId, request.PortfolioId);
-            
-            return new GetResponse
-            {
-                Portfolio = Portfolio.FromRepositoryModel(portfolio)
-            };
+            return portfolio;
         }
 
-        public override async Task<GetAllResponse> GetAll(GetAllRequest request, ServerCallContext context)
+        public async Task<PortfolioCollection> GetAll(GetAllPortfoliosRequest request)
         {
-            if (!Guid.TryParse(request.TraderId, out var traderId))
-            {
-                throw new RpcException(new Status(StatusCode.InvalidArgument, "traderId must be a UUID"));
-            }
-
-            var portfolios = await _repository.GetAllAsync(traderId);
+            var portfolios = await _repository.GetAllAsync(request.TraderId);
             
-            var response = new GetAllResponse();
-            response.Portfolios.AddRange(portfolios.Select(Portfolio.FromRepositoryModel));
+            var response = new PortfolioCollection
+            {
+                Items = portfolios
+            };
 
             return response;
         }
