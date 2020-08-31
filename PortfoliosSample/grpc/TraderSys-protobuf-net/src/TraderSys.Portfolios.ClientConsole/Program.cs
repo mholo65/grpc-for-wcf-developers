@@ -24,7 +24,7 @@ namespace TraderSys.Portfolios.ClientConsole
                     PortfolioId = 42
                 };
                 var response = await portfolios.Get(request);
-            
+
                 Console.WriteLine($"Portfolio contains {response.Items.Count} items.");
             }
             catch (RpcException e)

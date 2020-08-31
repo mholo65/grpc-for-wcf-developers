@@ -25,7 +25,7 @@ namespace TraderSys.Portfolios.Services
         public async Task<PortfolioCollection> GetAll(GetAllPortfoliosRequest request)
         {
             var portfolios = await _repository.GetAllAsync(request.TraderId);
-            
+
             var response = new PortfolioCollection
             {
                 Items = portfolios
