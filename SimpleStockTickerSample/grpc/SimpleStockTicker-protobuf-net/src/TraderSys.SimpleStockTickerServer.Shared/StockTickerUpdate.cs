@@ -11,7 +11,7 @@ namespace TraderSys.SimpleStockTickerServer.Shared
         public string Symbol { get; set; }
 
         [DataMember(Order = 2)]
-        public double Price { get; set; }
+        public decimal Price { get; set; }
 
         [DataMember(Order = 3)]
         public DateTime Time { get; set; }

@@ -14,7 +14,6 @@ namespace TraderSys.SimpleStockTickerServer.Services
         private readonly ILogger<StockTickerService> _logger;
         private IStockPriceSubscriber _subscriber;
 
-
         public StockTickerService(IStockPriceSubscriberFactory subscriberFactory, ILogger<StockTickerService> logger)
         {
             _subscriberFactory = subscriberFactory;
@@ -33,7 +32,7 @@ namespace TraderSys.SimpleStockTickerServer.Services
                     await buffer.Writer.WriteAsync(new StockTickerUpdate
                     {
                         Symbol = args.Symbol,
-                        Price = Convert.ToDouble(args.Price),
+                        Price = args.Price,
                         Time = DateTime.UtcNow
                     });
                 }
