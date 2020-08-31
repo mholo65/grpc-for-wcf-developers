@@ -8,10 +8,12 @@ using TraderSys.StockMarket;
 
 namespace TraderSys.SimpleStockTickerServer.Services
 {
-    public class StockTickerService : IStockTickerService
+    public class StockTickerService : IStockTickerService, IDisposable
     {
         private readonly IStockPriceSubscriberFactory _subscriberFactory;
         private readonly ILogger<StockTickerService> _logger;
+        private IStockPriceSubscriber _subscriber;
+
 
         public StockTickerService(IStockPriceSubscriberFactory subscriberFactory, ILogger<StockTickerService> logger)
         {
@@ -23,10 +25,8 @@ namespace TraderSys.SimpleStockTickerServer.Services
         {
             var buffer = Channel.CreateUnbounded<StockTickerUpdate>();
 
-            // TODO: How to dispose this? Make it a field?
-            var subscriber = _subscriberFactory.GetSubscriber(request.Symbols.ToArray());
-
-            subscriber.Update += async (sender, args) =>
+            _subscriber = _subscriberFactory.GetSubscriber(request.Symbols.ToArray());
+            _subscriber.Update += async (sender, args) =>
             {
                 try
                 {
@@ -44,6 +44,11 @@ namespace TraderSys.SimpleStockTickerServer.Services
             };
 
             return buffer.AsAsyncEnumerable(context.CancellationToken);
+        }
+
+        public void Dispose()
+        {
+            _subscriber?.Dispose();
         }
     }
 }
